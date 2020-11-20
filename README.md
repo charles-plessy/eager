@@ -23,62 +23,6 @@ The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool
     <img src="docs/images/output/overview/eager2_workflow.png" alt="nf-core/eager schematic workflow" width="70%"
 </p>
 
-## Pipeline steps
-
-### Default Steps
-
-By default the pipeline currently performs the following:
-
-* Create reference genome indices for mapping (`bwa`, `samtools`, and `picard`)
-* Sequencing quality control (`FastQC`)
-* Sequencing adapter removal and for paired end data merging (`AdapterRemoval`)
-* Read mapping to reference using (`bwa aln`, `bwa mem`, `CircularMapper`, or `bowtie2`)
-* Post-mapping processing, statistics and conversion to bam (`samtools`)
-* Ancient DNA C-to-T damage pattern visualisation (`DamageProfiler`)
-* PCR duplicate removal (`DeDup` or `MarkDuplicates`)
-* Post-mapping statistics and BAM quality control (`Qualimap`)
-* Library Complexity Estimation (`preseq`)
-* Overall pipeline statistics summaries (`MultiQC`)
-
-### Additional Steps
-
-Additional functionality contained by the pipeline currently includes:
-
-#### Input
-
-* Automatic merging of complex sequencing setups (e.g. multiple lanes, sequencing configurations, library types)
-
-#### Preprocessing
-
-* Illumina two-coloured sequencer poly-G tail removal (`fastp`)
-* Automatic conversion of unmapped reads to FASTQ (`samtools`)
-* Host DNA (mapped reads) stripping from input FASTQ files (for sensitive samples)
-
-#### aDNA Damage manipulation
-
-* Damage removal/clipping for UDG+/UDG-half treatment protocols (`BamUtil`)
-* Damaged reads extraction and assessment (`PMDTools`)
-* Nuclear DNA contamination estimation of human samples (`angsd`)
-
-#### Genotyping
-
-* Creation of VCF genotyping files (`GATK UnifiedGenotyper`, `GATK HaplotypeCaller` and `FreeBayes`)
-* Creation of EIGENSTRAT genotyping files (`pileupCaller`)
-* Creation of Genotype Likelihood files (`angsd`)
-* Consensus sequence FASTA creation (`VCF2Genome`)
-* SNP Table generation (`MultiVCFAnalyzer`)
-
-#### Biological Information
-
-* Mitochondrial to Nuclear read ratio calculation (`MtNucRatioCalculator`)
-* Statistical sex determination of human individuals (`Sex.DetERRmine`)
-
-#### Metagenomic Screening
-
-* Taxonomic binner with alignment (`MALT`)
-* Taxonomic binner without alignment (`Kraken2`)
-* aDNA characteristic screening of taxonomically binned data from MALT (`MaltExtract`)
-
 ## Quick Start
 
 1. Install [`nextflow`](https://nf-co.re/usage/installation) (version >= 20.04.0)
@@ -112,6 +56,47 @@ See [usage docs](https://nf-co.re/eager/docs/usage.md) for all of the available 
 Modifications to the default pipeline are easily made using various options
 as described in the documentation.
 
+## Pipeline summary
+
+By default the pipeline currently performs the following:
+
+* Create reference genome indices for mapping (`bwa`, `samtools`, and `picard`)
+* Sequencing quality control (`FastQC`)
+* Sequencing adapter removal and for paired end data merging (`AdapterRemoval`)
+* Read mapping to reference using (`bwa aln`, `bwa mem`, `CircularMapper`, or `bowtie2`)
+* Post-mapping processing, statistics and conversion to bam (`samtools`)
+* Ancient DNA C-to-T damage pattern visualisation (`DamageProfiler`)
+* PCR duplicate removal (`DeDup` or `MarkDuplicates`)
+* Post-mapping statistics and BAM quality control (`Qualimap`)
+* Library Complexity Estimation (`preseq`)
+* Overall pipeline statistics summaries (`MultiQC`)
+
+Additional functionality contained by the pipeline currently includes:
+
+* Input
+  * Automatic merging of complex sequencing setups (e.g. multiple lanes, sequencing configurations, library types)
+* Preprocessing
+  * Illumina two-coloured sequencer poly-G tail removal (`fastp`)
+  * Automatic conversion of unmapped reads to FASTQ (`samtools`)
+  * Host DNA (mapped reads) stripping from input FASTQ files (for sensitive samples)
+* aDNA Damage manipulation
+  * Damage removal/clipping for UDG+/UDG-half treatment protocols (`BamUtil`)
+  * Damaged reads extraction and assessment (`PMDTools`)
+  * Nuclear DNA contamination estimation of human samples (`angsd`)
+* Genotyping
+  * Creation of VCF genotyping files (`GATK UnifiedGenotyper`, `GATK HaplotypeCaller` and `FreeBayes`)
+  * Creation of EIGENSTRAT genotyping files (`pileupCaller`)
+  * Creation of Genotype Likelihood files (`angsd`)
+  * Consensus sequence FASTA creation (`VCF2Genome`)
+  * SNP Table generation (`MultiVCFAnalyzer`)
+* Biological Information
+  * Mitochondrial to Nuclear read ratio calculation (`MtNucRatioCalculator`)
+  * Statistical sex determination of human individuals (`Sex.DetERRmine`)
+* Metagenomic Screening
+  * Taxonomic binner with alignment (`MALT`)
+  * Taxonomic binner without alignment (`Kraken2`)
+  * aDNA characteristic screening of taxonomically binned data from MALT (`MaltExtract`)
+
 ## Documentation
 
 The nf-core/eager pipeline comes with documentation about the pipeline: [usage](https://nf-co.re/eager/usage) and [output](https://nf-co.re/eager/output).
@@ -127,27 +112,10 @@ The nf-core/eager pipeline comes with documentation about the pipeline: [usage](
 
 ## Credits
 
-This pipeline was mostly written by Alexander Peltzer ([apeltzer](https://github.com/apeltzer)) and [James A. Fellows Yates](https://github.com/jfy133), with contributions from [Stephen Clayton](https://github.com/sc13-bioinf), [Thiseas C. Lamnidis](https://github.com/TCLamnidis), [Maxime Borry](https://github.com/maxibor), [Zandra Fagernäs](https://github.com/ZandraFagernas), [Aida Andrades Valtueña](https://github.com/aidaanva) and [Maxime Garcia](https://github.com/MaxUlysse) and the nf-core community.
+This pipeline was mostly written by Alexander Peltzer ([apeltzer](https://github.com/apeltzer)) and [James A. Fellows Yates](https://github.com/jfy133), with contributions from [Stephen Clayton](https://github.com/sc13-bioinf), [Thiseas C. Lamnidis](https://github.com/TCLamnidis), [Maxime Borry](https://github.com/maxibor), [Zandra Fagernäs](https://github.com/ZandraFagernas), [Aida Andrades Valtueña](https://github.com/aidaanva), [Judith Neukamm](https://github.com/JudithNeukamm), and [Maxime Garcia](https://github.com/MaxUlysse) and the nf-core community.
 
-If you would like to contribute to this pipeline, please open an issue (or even better, a pull request - please see the [contributing guidelines](.github/CONTRIBUTING.md), and ask to be added to the project - everyone is welcome to contribute here!.
-
-For further information or help, don't hesitate to get in touch on the [Slack `#eager` channel](https://nfcore.slack.com/channels/eager) (you can join with [this invite](https://nf-co.re/join/slack)).
-
-## Authors (alphabetical)
-
-* [Aida Andrades Valtueña](https://github.com/aidaanva)
-* [Alexander Peltzer](https://github.com/apeltzer)
-* [James A. Fellows Yates](https://github.com/jfy133)
-* [Judith Neukamm](https://github.com/JudithNeukamm)
-* [Maxime Borry](https://github.com/maxibor)
-* [Maxime Garcia](https://github.com/MaxUlysse)
-* [Stephen Clayton](https://github.com/sc13-bioinf)
-* [Thiseas C. Lamnidis](https://github.com/TCLamnidis)
-* [Zandra Fagernäs](https://github.com/ZandraFagernas)
-
-## Additional Contributors (alphabetical)
-
-Those who have provided conceptual guidance, suggestions, bug reports etc.
+We thank the following people for their extensive assistance in the development
+of this pipeline:
 
 * Arielle Munters
 * [Hester van Schalkwyk](https://github.com/hesterjvs)
@@ -165,7 +133,29 @@ Those who have provided conceptual guidance, suggestions, bug reports etc.
 
 If you've contributed and you're missing in here, please let us know and we will add you in of course!
 
-## Tool References
+## Contributions and Support
+
+If you would like to contribute to this pipeline, please open an issue (or even better, a pull request - please see the [contributing guidelines](.github/CONTRIBUTING.md), and ask to be added to the project - everyone is welcome to contribute here!.
+
+For further information or help, don't hesitate to get in touch on the [Slack `#eager` channel](https://nfcore.slack.com/channels/eager) (you can join with [this invite](https://nf-co.re/join/slack)).
+
+## Citations
+
+If you use `nf-core/eager` for your analysis, please cite the `eager` preprint as follows:
+> James A. Fellows Yates, Thiseas Christos Lamnidis, Maxime Borry, Aida Andrades Valtueña, Zandra Fagneräs, Stephen Clayton, Maxime U. Garcia, Judith Neukamm, Alexander Peltzer **Reproducible, portable, and efficient ancient genome reconstruction with nf-core/eager** bioRxiv 2020.06.11.145615; [doi: https://doi.org/10.1101/2020.06.11.145615](https://doi.org/10.1101/2020.06.11.145615)
+
+You can cite the eager zenodo record for a specific version using the following [doi: 10.5281/zenodo.3698082](https://zenodo.org/badge/latestdoi/135918251)
+
+You can cite the `nf-core` publication as follows:
+
+> **The nf-core framework for community-curated bioinformatics pipelines.**
+>
+> Philip Ewels, Alexander Peltzer, Sven Fillinger, Harshil Patel, Johannes Alneberg, Andreas Wilm, Maxime Ulysse Garcia, Paolo Di Tommaso & Sven Nahnsen.
+>
+> _Nat Biotechnol._ 2020 Feb 13. doi: [10.1038/s41587-020-0439-x](https://dx.doi.org/10.1038/s41587-020-0439-x).
+> ReadCube: [Full Access Link](https://rdcu.be/b1GjZ)
+
+In addition, references of tools and data used in this pipeline are as follows:
 
 * **EAGER v1**, CircularMapper, DeDup* Peltzer, A., Jäger, G., Herbig, A., Seitz, A., Kniep, C., Krause, J., & Nieselt, K. (2016). EAGER: efficient ancient genome reconstruction. Genome Biology, 17(1), 1–14. [https://doi.org/10.1186/s13059-016-0918-z](https://doi.org/10.1186/s13059-016-0918-z).  Download: [https://github.com/apeltzer/EAGER-GUI](https://github.com/apeltzer/EAGER-GUI) and [https://github.com/apeltzer/EAGER-CLI](https://github.com/apeltzer/EAGER-CLI)
 * **FastQC** Download: [https://www.bioinformatics.babraham.ac.uk/projects/fastqc/](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
@@ -197,26 +187,8 @@ If you've contributed and you're missing in here, please let us know and we will
 * **sequenceTools** Stephan Schiffels (Unpublished). Download: [https://github.com/stschiff/sequenceTools](https://github.com/stschiff/sequenceTools)
 * **EigenstratDatabaseTools** Thiseas C. Lamnidis (Unpublished). Download: [https://github.com/TCLamnidis/EigenStratDatabaseTools.git](https://github.com/TCLamnidis/EigenStratDatabaseTools.git)
 
-## Data References
-
 This repository uses test data from the following studies:
 
 * Fellows Yates, J. A. et al. (2017) ‘Central European Woolly Mammoth Population Dynamics: Insights from Late Pleistocene Mitochondrial Genomes’, Scientific reports, 7(1), p. 17714. [doi: 10.1038/s41598-017-17723-1](https://doi.org/10.1038/s41598-017-17723-1).
 * Gamba, C. et al. (2014) ‘Genome flux and stasis in a five millennium transect of European prehistory’, Nature communications, 5, p. 5257. [doi: 10.1038/ncomms6257](https://doi.org/10.1038/ncomms6257).
 * Star, B. et al. (2017) ‘Ancient DNA reveals the Arctic origin of Viking Age cod from Haithabu, Germany’, Proceedings of the National Academy of Sciences of the United States of America, 114(34), pp. 9152–9157. [doi: 10.1073/pnas.1710186114](https://doi.org/10.1073/pnas.1710186114).
-
-## Citation
-
-If you use `nf-core/eager` for your analysis, please cite the `eager` preprint as follows:
-> James A. Fellows Yates, Thiseas Christos Lamnidis, Maxime Borry, Aida Andrades Valtueña, Zandra Fagneräs, Stephen Clayton, Maxime U. Garcia, Judith Neukamm, Alexander Peltzer **Reproducible, portable, and efficient ancient genome reconstruction with nf-core/eager** bioRxiv 2020.06.11.145615; [doi: https://doi.org/10.1101/2020.06.11.145615](https://doi.org/10.1101/2020.06.11.145615)
-
-You can cite the eager zenodo record for a specific version using the following [doi: 10.5281/zenodo.3698082](https://zenodo.org/badge/latestdoi/135918251)
-
-You can cite the `nf-core` publication as follows:
-
-> **The nf-core framework for community-curated bioinformatics pipelines.**
->
-> Philip Ewels, Alexander Peltzer, Sven Fillinger, Harshil Patel, Johannes Alneberg, Andreas Wilm, Maxime Ulysse Garcia, Paolo Di Tommaso & Sven Nahnsen.
->
-> _Nat Biotechnol._ 2020 Feb 13. doi: [10.1038/s41587-020-0439-x](https://dx.doi.org/10.1038/s41587-020-0439-x).
-> ReadCube: [Full Access Link](https://rdcu.be/b1GjZ)

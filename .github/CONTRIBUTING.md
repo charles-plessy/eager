@@ -57,9 +57,12 @@ These tests are run both with the latest available version of `Nextflow` and als
 
 For further information/help, please consult the [nf-core/eager documentation](https://nf-co.re/eager/usage) and don't hesitate to get in touch on the nf-core Slack [#eager](https://nfcore.slack.com/channels/eager) channel ([join our Slack here](https://nf-co.re/join/slack)).
 
-# Code Contribution Guidelines
+## Pipeline Contribution Conventions
 
-To make the EAGER2 code and processing logic more understandable for new contributors, and to ensure quality. We are making an attempt to somewhat-standardise the way the code is written.
+To make the nf-core/eager code and processing logic more understandable for new understandable for new contributors and to ensure quality, we semi-standardise
+the way the code and other contributions are written.
+
+### Adding a New Module
 
 If you wish to contribute a new module, please use the following coding standards.
 
@@ -80,15 +83,56 @@ The typical workflow for adding a new module is as follows:
 13. Add new flags/options to 'usage' documentation under `docs/usage.md`.
 14. Add any descriptions of MultiQC report sections and output files to `docs/output.md`.
 
-## Default Values
+### Default Values
 
 Default values should go in `nextflow.config` under the `params` scope, and `nextflow_schema.json` (latter with `nf-core schema build .`)
 
-## Default resource processes
+### Default Processes Resource Requirements
 
 Defining recommended 'minimum' resource requirements (CPUs/Memory) for a process should be defined in `conf/base.config`. This can be utilised within the process using `${task.cpu}` or `${task.memory}` variables in the `script:` block.
 
-## Process Concept
+### Naming Schemes
+
+Please use the following naming schemes, to make it easy to understand what is going where.
+
+* process output: `ch_output_from_<process>`(this should always go into the bypass statement described above).
+* skipped process output: `ch_<previousstage>_for_<skipprocess>`(this goes out of the bypass statement described above)
+* process inputs: `ch_<previousstage>_for_<process>` (this goes into a process)
+
+### Nextflow Version Bumping
+
+If you have agreement from reviewers, you may bump the 'default' minimum version of nextflow (e.g. for testing), with `nf-core bump-version`.
+
+### Software Version Reporting
+
+If you add a new tool to the pipeline, please ensure you add the information of the tool to the `get_software_version` process.
+
+Add to the script block of the process, something like the following:
+
+```bash
+<YOUR_TOOL> --version &> v_<YOUR_TOOL>.txt 2>&1 || true
+```
+
+or
+
+```bash
+<YOUR_TOOL> --help | head -n 1 &> v_<YOUR_TOOL>.txt 2>&1 || true
+```
+
+You then need to edit the script `bin/scrape_software_versions.py` to
+
+1. add a (python) regex for your tools --version output (as in stored in the `v_<YOUR_TOOL>.txt` file), to ensure the version is reported as a `v` and the version number e.g. `v2.1.1`
+2. add a HTML block entry to the `OrderedDict` for formatting in MultiQC.
+
+> If a tool does not unfortunately offer any printing of version data, you may add this 'manually' e.g. with `echo "v1.1" > v_<YOUR_TOOL>.txt`
+
+### Images and Figures
+
+For the overview image we follow the nf-core [style guidelines](https://nf-co.re/developers/design_guidelines).
+
+For all internal nf-core/eager documentation images we are using the 'Kalam' font by the Indian Type Foundry and licensed under the Open Font License. It can be found for download here [here](https://fonts.google.com/specimen/Kalam).
+
+### Process Concept
 
 We are providing a highly configurable pipeline, with many options to turn on and off different processes in different combinations. This can make a very complex graph structure that can cause a large amount of duplicated channels coming out of every process to account for each possible combination.
 
@@ -164,44 +208,3 @@ if (params.run_fastp) {
 }
 
  ```
-
-## Naming Schemes
-
-Please use the following naming schemes, to make it easy to understand what is going where.
-
-* process output: `ch_output_from_<process>`(this should always go into the bypass statement described above).
-* skipped process output: `ch_<previousstage>_for_<skipprocess>`(this goes out of the bypass statement described above)
-* process inputs: `ch_<previousstage>_for_<process>` (this goes into a process)
-
-## Nextflow Version Bumping
-
-If you have agreement from reviewers, you may bump the 'default' minimum version of nextflow (e.g. for testing), with `nf-core bump-version`.
-
-## Software Version Reporting
-
-If you add a new tool to the pipeline, please ensure you add the information of the tool to the `get_software_version` process.
-
-Add to the script block of the process, something like the following:
-
-```bash
-<YOUR_TOOL> --version &> v_<YOUR_TOOL>.txt 2>&1 || true
-```
-
-or
-
-```bash
-<YOUR_TOOL> --help | head -n 1 &> v_<YOUR_TOOL>.txt 2>&1 || true
-```
-
-You then need to edit the script `bin/scrape_software_versions.py` to
-
-1. add a (python) regex for your tools --version output (as in stored in the `v_<YOUR_TOOL>.txt` file), to ensure the version is reported as a `v` and the version number e.g. `v2.1.1`
-2. add a HTML block entry to the `OrderedDict` for formatting in MultiQC.
-
-> If a tool does not unfortunately offer any printing of version data, you may add this 'manually' e.g. with `echo "v1.1" > v_<YOUR_TOOL>.txt`
-
-## Images and Figures
-
-For all internal nf-core/eager documentation images we are using the 'Kalam' font by the Indian Type Foundry and licensed under the Open Font License. It can be found for download here [here](https://fonts.google.com/specimen/Kalam).
-
-For the overview image we follow the nf-core [style guidelines](https://nf-co.re/developers/design_guidelines).
